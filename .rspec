@@ -1,0 +1,1 @@
+-r rspec/by -f RSpec::By::Formatter --colour
