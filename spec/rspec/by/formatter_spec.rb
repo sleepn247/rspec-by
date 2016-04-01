@@ -59,10 +59,12 @@ module RSpec::By
       context1 = group.describe("context 1")
       context1.example("nested example 1.1"){}
       context1.example("nested example 1.2") do
-        by('knock knock') {}
-        and_by("who's there?") {}
-        and_by('by') {}
-        and_by('by who?') {}
+        by('knock knock') do
+          and_by("who's there?") {}
+        end
+        and_by('by') do
+          and_by('by who?') {}
+        end
         and_by('by by') {}
       end
 
@@ -81,25 +83,22 @@ module RSpec::By
       expect(output).to eq(normalize_durations("
 root
   context 1
-    Example: nested example 1.1
-    Passed                                                              0.00022s
-    Example: nested example 1.2
-      knock knock                                                       0.00022s
-      who's there?                                                      0.00022s
-      by                                                                0.00022s
-      by who?                                                           0.00022s
+    nested example 1.1                                                  0.00022s
+    nested example 1.2
+      knock knock
+        who's there?                                                    0.00022s
+                                                                        0.00022s
+      by
+        by who?                                                         0.00022s
+                                                                        0.00022s
       by by                                                             0.00022s
-    Passed                                                              0.00022s
+                                                                        0.00022s
     context 1.1
-      Example: nested example 1.1.1
-      Passed                                                            0.00022s
-      Example: nested example 1.1.2
-      Passed                                                            0.00022s
+      nested example 1.1.1                                              0.00022s
+      nested example 1.1.2                                              0.00022s
   context 2
-    Example: nested example 2.1
-    Passed                                                              0.00022s
-    Example: nested example 2.2
-    Passed                                                              0.00022s
+    nested example 2.1                                                  0.00022s
+    nested example 2.2                                                  0.00022s
 "))
     end
   end

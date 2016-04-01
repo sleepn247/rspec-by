@@ -20,76 +20,114 @@ module RSpec
       def initialize(output)
         super(output)
         @failed_examples = []
-        @by_message_length = 0
+        @bullets = [Bullet.new(true)]
       end
 
+      def example_group_started(notification)
+        bullet_start(notification.group.description)
+      end
+
+      def example_group_finished(_notification)
+        @bullets.pop
+      end
+      
       def example_started(notification)
-        output.puts(
-          "#{current_indentation}Example: #{notification.example.description}")
-        @group_level += 1
-        @example_began = @during = RSpec::Core::Time.now
+        bullet_start(notification.example.description)
       end
 
       def example_passed(passed)
-        @group_level -= 1
-        passed_msg = indent("Passed")
-        end_msg = end_tm.rjust(RIGHT_MARGIN - passed_msg.length, ' ')
-        output.puts RSpec::Core::Formatters::ConsoleCodes.wrap(
-                      "#{passed_msg}#{end_msg}", :success)
+        bullet_end(:success)
       end
 
       def example_failed(failure)
-        @group_level -= 1
-        output.puts("#{current_indentation}Failed in #{end_tm}")
         @failed_examples << failure.example
         output.puts failure.fully_formatted(@failed_examples.size)
-        output.puts
+        bullet_end
       end
 
       def by_started message
-        res = indent message
-        @by_message_length = res.length
-        output.print by_output(res)
+        bullet_start(message, :cyan)
       end
 
       def by_ended(message)
-        message += during_tm
-        output.puts by_output(message.rjust(RIGHT_MARGIN - @by_message_length, ' '))
+        bullet_end(:cyan)
       end
 
       def indent message
         "#{current_indentation}#{message}"
       end
 
-      def by_output message
-        RSpec::Core::Formatters::ConsoleCodes.wrap(message, :cyan)
+      def current_indentation
+        '  ' * (@bullets.size - 1)
       end
 
-      def during_tm
-        temp = RSpec::Core::Time.now
-        delta = temp - @during
-        @during = temp
-        format_time(delta)
+      def current_bullet
+        @bullets.last
       end
 
-      def end_tm
-        delta = RSpec::Core::Time.now - @example_began
-        format_time(delta)
-      end
-
-      def format_time(duration)
-        if duration > 60
-          minutes = duration.to_i / 60
-          seconds = duration - minutes * 60
-          "#{minutes}m #{format_seconds(seconds)}s"
-        else
-          "#{format_seconds(duration)}s"
+      def bullet_start(message, color = :white)
+        unless current_bullet.nested?
+          output.puts ''
+          current_bullet.nest
         end
+        res = indent message
+        output.print RSpec::Core::Formatters::ConsoleCodes.wrap(res, color)
+        @bullets.push(Bullet.new(res))
       end
 
-      def format_seconds(float, precision = nil)
-        precision ||= (float < 1) ? 5 : 2
-        sprintf("%.#{precision}f", float)
+      def bullet_end(color = :white)
+        bullet = @bullets.pop
+        bullet.stop
+        if bullet.nested?
+          bullet.message = ''
+        end
+        offset = RIGHT_MARGIN - bullet.offset
+        output.puts RSpec::Core::Formatters::ConsoleCodes.wrap(bullet.delta_t.rjust(offset, ' '), color)
+      end
+
+      class Bullet
+        attr_accessor :message
+        def initialize(message = '', nested = false)
+          @t0 = RSpec::Core::Time.now
+          @nested = nested
+          @message = message
+        end
+
+        def stop
+          @t1 = RSpec::Core::Time.now
+        end
+
+        def delta_t
+          delta_t = @t1 - @t0
+          format_time(delta_t)
+        end
+
+        def offset
+          @message.size
+        end
+        
+        def nest
+          @nested = true
+        end
+
+        def nested?
+          @nested
+        end
+
+        def format_time(duration)
+          if duration > 60
+            minutes = duration.to_i / 60
+            seconds = duration - minutes * 60
+            "#{minutes}m #{format_seconds(seconds)}s"
+          else
+            "#{format_seconds(duration)}s"
+          end
+        end
+
+        def format_seconds(float, precision = nil)
+          precision ||= (float < 1) ? 5 : 2
+          sprintf("%.#{precision}f", float)
+        end
       end
     end
   end
