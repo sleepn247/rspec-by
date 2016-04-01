@@ -70,7 +70,7 @@ module RSpec
       def bullet_start(message, color = :white)
         unless current_bullet.nested?
           offset = RIGHT_MARGIN - current_bullet.offset
-          output.print RSpec::Core::Formatters::ConsoleCodes.wrap(current_bullet.delta_t.rjust(offset, ' '), :white)
+          output.print RSpec::Core::Formatters::ConsoleCodes.wrap(current_bullet.delta_t.rjust(offset, ' '), color)
           output.puts ''
           current_bullet.nest
         end

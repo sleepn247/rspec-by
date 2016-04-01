@@ -101,7 +101,7 @@ EOS
 
       output = normalize_durations(formatter_output.string)
       output = remove_color(output)
-      expect(output).to eq(normalize_durations(regular_output))
+      expect(output).to eq(normalize_durations(default_output))
     end
   end
 end
