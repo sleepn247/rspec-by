@@ -9,9 +9,11 @@ module RSpec
   module By
     class Formatter < RSpec::Core::Formatters::DocumentationFormatter
       RSpec::Core::Formatters.register self,
-                                   :example_failed,
+                                   :example_group_started,
+                                   :example_group_finished,
                                    :example_started,
                                    :example_passed,
+                                   :example_failed,
                                    :by_started,
                                    :by_ended
 
@@ -20,7 +22,7 @@ module RSpec
       def initialize(output)
         super(output)
         @failed_examples = []
-        @bullets = [Bullet.new(true)]
+        @bullets = [Bullet.new('', true)]
       end
 
       def example_group_started(notification)
@@ -67,6 +69,8 @@ module RSpec
 
       def bullet_start(message, color = :white)
         unless current_bullet.nested?
+          offset = RIGHT_MARGIN - current_bullet.offset
+          output.print RSpec::Core::Formatters::ConsoleCodes.wrap(current_bullet.delta_t.rjust(offset, ' '), :white)
           output.puts ''
           current_bullet.nest
         end
@@ -77,7 +81,6 @@ module RSpec
 
       def bullet_end(color = :white)
         bullet = @bullets.pop
-        bullet.stop
         if bullet.nested?
           bullet.message = ''
         end
@@ -93,12 +96,8 @@ module RSpec
           @message = message
         end
 
-        def stop
-          @t1 = RSpec::Core::Time.now
-        end
-
         def delta_t
-          delta_t = @t1 - @t0
+          delta_t = RSpec::Core::Time.now - @t0
           format_time(delta_t)
         end
 

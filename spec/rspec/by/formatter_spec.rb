@@ -54,6 +54,27 @@ module RSpec::By
         end
     end
 
+    default_output = <<-EOS
+root                                                                    0.00022s
+  context 1                                                             0.00022s
+    nested example 1.1                                                  0.00022s
+    nested example 1.2                                                  0.00022s
+      knock knock                                                       0.00022s
+        who's there?                                                    0.00022s
+                                                                        0.00022s
+      by                                                                0.00022s
+        by who?                                                         0.00022s
+                                                                        0.00022s
+      by by                                                             0.00022s
+                                                                        0.00022s
+    context 1.1                                                         0.00022s
+      nested example 1.1.1                                              0.00022s
+      nested example 1.1.2                                              0.00022s
+  context 2                                                             0.00022s
+    nested example 2.1                                                  0.00022s
+    nested example 2.2                                                  0.00022s
+EOS
+
     it "outputs correctly" do
       group = RSpec.describe("root")
       context1 = group.describe("context 1")
@@ -80,26 +101,7 @@ module RSpec::By
 
       output = normalize_durations(formatter_output.string)
       output = remove_color(output)
-      expect(output).to eq(normalize_durations("
-root
-  context 1
-    nested example 1.1                                                  0.00022s
-    nested example 1.2
-      knock knock
-        who's there?                                                    0.00022s
-                                                                        0.00022s
-      by
-        by who?                                                         0.00022s
-                                                                        0.00022s
-      by by                                                             0.00022s
-                                                                        0.00022s
-    context 1.1
-      nested example 1.1.1                                              0.00022s
-      nested example 1.1.2                                              0.00022s
-  context 2
-    nested example 2.1                                                  0.00022s
-    nested example 2.2                                                  0.00022s
-"))
+      expect(output).to eq(normalize_durations(regular_output))
     end
   end
 end
