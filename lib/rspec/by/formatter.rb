@@ -32,7 +32,7 @@ module RSpec
       def example_group_finished(_notification)
         @bullets.pop
       end
-      
+
       def example_started(notification)
         bullet_start(notification.example.description)
       end
@@ -104,7 +104,7 @@ module RSpec
         def offset
           @message.size
         end
-        
+
         def nest
           @nested = true
         end
@@ -123,8 +123,8 @@ module RSpec
           end
         end
 
-        def format_seconds(float, precision = nil)
-          precision ||= (float < 1) ? 5 : 2
+        def format_seconds(float, precision = 2)
+          #precision ||= (float < 1) ? 5 : 2
           sprintf("%.#{precision}f", float)
         end
       end

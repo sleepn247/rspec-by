@@ -55,24 +55,24 @@ module RSpec::By
     end
 
     default_output = <<-EOS
-root                                                                    0.00022s
-  context 1                                                             0.00022s
-    nested example 1.1                                                  0.00022s
-    nested example 1.2                                                  0.00022s
-      knock knock                                                       0.00022s
-        who's there?                                                    0.00022s
-                                                                        0.00022s
-      by                                                                0.00022s
-        by who?                                                         0.00022s
-                                                                        0.00022s
-      by by                                                             0.00022s
-                                                                        0.00022s
-    context 1.1                                                         0.00022s
-      nested example 1.1.1                                              0.00022s
-      nested example 1.1.2                                              0.00022s
-  context 2                                                             0.00022s
-    nested example 2.1                                                  0.00022s
-    nested example 2.2                                                  0.00022s
+root                                                                       0.01s
+  context 1                                                                0.01s
+    nested example 1.1                                                     0.01s
+    nested example 1.2                                                     0.01s
+      knock knock                                                          0.01s
+        who's there?                                                       0.01s
+                                                                           0.01s
+      by                                                                   0.01s
+        by who?                                                            0.01s
+                                                                           0.01s
+      by by                                                                0.01s
+                                                                           0.01s
+    context 1.1                                                            0.01s
+      nested example 1.1.1                                                 0.01s
+      nested example 1.1.2                                                 0.01s
+  context 2                                                                0.01s
+    nested example 2.1                                                     0.01s
+    nested example 2.2                                                     0.01s
 EOS
 
     it "outputs correctly" do

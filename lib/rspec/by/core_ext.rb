@@ -42,12 +42,14 @@ module RSpec::Core
 
   class Example
     private
-    
+
     alias :start_without_reporter :start
 
     def start(reporter)
       start_without_reporter(reporter)
-      @example_group_instance.instance_variable_set(:@by_reporter, reporter)
+      if @example_group_instance
+        @example_group_instance.instance_variable_set(:@by_reporter, reporter)
+      end
     end
   end
 end
