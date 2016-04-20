@@ -6,9 +6,5 @@ rvm:
 install:
   - bundle install
 
-before_script:
-  - sh -e /etc/init.d/xvfb start
-
 script:
-  - export DISPLAY=:99.0
-  - bundle exec rake
+  - bundle exec rspec
