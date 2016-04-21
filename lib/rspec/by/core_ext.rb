@@ -27,7 +27,7 @@ module RSpec::Core
   end
 
   class ExampleGroup
-    def by message, level=0
+    def by message
       pending(message) unless block_given?
       begin
         @by_reporter.by_started(message)

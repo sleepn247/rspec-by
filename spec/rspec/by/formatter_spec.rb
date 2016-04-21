@@ -1,3 +1,4 @@
+require 'spec_helper'
 require "rspec/by/core_ext"
 require "stringio"
 

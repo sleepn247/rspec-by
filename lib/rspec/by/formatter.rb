@@ -37,7 +37,7 @@ module RSpec
         bullet_start(notification.example.description)
       end
 
-      def example_passed(passed)
+      def example_passed(_passed)
         bullet_end(:success)
       end
 
@@ -51,7 +51,7 @@ module RSpec
         bullet_start(message, :cyan)
       end
 
-      def by_ended(message)
+      def by_ended(_message)
         bullet_end(:cyan)
       end
 
